@@ -19,7 +19,7 @@ color_left = '#AAAADD'
 color_right = '#FFFFFF'
 color_img_div = '#FFFFFF'
 
-with open("./da_login.json", "r") as read_file:
+with open("/home/tiphaine/zoopy_da/da_login.json", "r") as read_file:
 	da_logs = json.load(read_file)
 # ------------------ DEBUG PARAMS -----------------
 RUN_DA = True
@@ -49,6 +49,10 @@ img_url_test = ['https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/i/2831f
 # Layout
 app.layout = html.Div(
 	[
+                html.Link(
+                            rel='stylesheet',
+                                    href='https://codepen.io/chriddyp/pen/bWLwgP.css'
+                        ),
 		html.Div(
 			[
 				html.Div(
@@ -210,4 +214,4 @@ def fire_img_timer(n_intervals, radio_value, json_dev):
 
 
 if (__name__ == '__main__') & run_app:
-	app.run_server(debug=True)
+	app.run_server(host="0.0.0.0", debug=True)
