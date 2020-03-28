@@ -19,7 +19,7 @@ color_left = '#AAAADD'
 color_right = '#FFFFFF'
 color_img_div = '#FFFFFF'
 
-with open("./da_login.json", "r") as read_file:
+with open("./da_login2.json", "r") as read_file:
 	da_logs = json.load(read_file)
 # ------------------ DEBUG PARAMS -----------------
 RUN_DA = True
@@ -30,7 +30,13 @@ run_app = True
 
 
 # ------------------ DASH APP -----------------------
-
+dropdownmenu = dcc.Dropdown(
+	id='folders-dropdown',
+	options=[
+		{'label': 'Loading, please wait...', 'value': '0'}
+	],
+	value='0'
+)
 
 # App
 app = dash.Dash()
@@ -52,9 +58,18 @@ app.layout = html.Div(
 		html.Div(
 			[
 				html.Div(
-					[html.H1('Sketchtember')], 
+					[html.H1('Sketchtember', id='title', n_clicks=0)], 
 					style={'background': color_head},
 					className="twelve columns"),
+			], 
+		className="row"
+		),
+		html.Div(
+			[
+				html.Div(
+					[dropdownmenu], 
+					style={'background': color_head},
+					className="two columns"),
 			], 
 		className="row"
 		),
@@ -66,8 +81,8 @@ app.layout = html.Div(
 							id='radio_timing',
 							options=[
 								{'label': 'Just looking (10 images in 30 sec)', 'value': '3,6,9,12,15,18,21,24,30,33'},
-								{'label': 'Warm up (12 min, 10 sketches, increasing time)', 'value': '30,60,90,120,150,180,240,300,420,720'},
-								{'label': 'Workout (30 min, 6 sketches of 5 min)', 'value': '300,600,900,1200,1500,1800'}
+								{'label': 'Warm up (12 min, 10 sketches, increasing time)', 'value': '30,60,90,120,150,180,240,300,420,720'}
+								#{'label': 'Workout (30 min, 6 sketches of 5 min)', 'value': '300,600,900,1200,1500,1800'}
 							],
 							value='30,60,90,120,150,180,240,300,420,720',
 							labelStyle={'display': 'inline-block'}
@@ -101,6 +116,19 @@ app.layout = html.Div(
 	])
 
 # ------------------ FUNCTIONS -----------------------
+def fetch_folders(username='Sketchtember'):
+	da = deviantart.Api(da_logs["id"], da_logs["mdp"])
+	LIMIT = 15
+	has_more = True
+	offset = 0
+	all_folders = []
+	while(has_more):
+		collec = da.get_collections(username=username, offset=offset, limit=LIMIT)
+		folder = collec['results']
+		all_folders += folder
+		has_more = collec["has_more"]
+		offset += LIMIT
+	return all_folders
 
 def choose_img_display(img_url, img_height, img_width, max_height):
 	ratio_img = max_height/img_height
@@ -119,7 +147,7 @@ def choose_img_display(img_url, img_height, img_width, max_height):
 			})
 	return img_display
 
-def fetch_img(n_img):
+def fetch_img(n_img, folderid, username):
 	# max number of img : 50
 	if RUN_DA & (n_img <= 50):
 		print('Fetching img from Deviantart')
@@ -127,11 +155,19 @@ def fetch_img(n_img):
 		da = deviantart.Api(da_logs["id"], da_logs["mdp"])
 		#sketchit = DA_sketch_appli(da)
 		#folderid = 'DC11C610-7878-FCF8-CDDF-DB9428F7CB29' # Sketch folder
+		#folderid='5B222A0F-8E0B-D602-920C-BCA299BEAE3E'#amphibians
 		#folderid = '0BB1B33D-87F6-F45A-ACB9-3AE61EA78C76' # inspiration 2017
 		#folderid = '93C80B8C-18E8-98CC-764E-7CC2258ED2CD' # Birds
-		folderid =  "F4E960A3-2D38-9731-D51E-878957299FC5" # Sculptures
+		#folderid =  "F4E960A3-2D38-9731-D51E-878957299FC5" # Sculptures
+		#folderid="AA53736E-41A2-7032-C280-F39B57ED6E7D"#pantyhose-fan
+		#folderid="44A4EDFE-8A95-06B8-2B48-DF5D873DA65E"#parazelsus
+
+
 		infos_devs = []
-		collec = da.get_collection(folderid, username='l-Zoopy-l', offset=0, limit=24)
+		#collec = da.get_collection(folderid, username='l-Zoopy-l', offset=10, limit=10)
+		collec = da.get_collection(folderid, username=username, offset=0, limit=12)
+
+		#
 		imgs = collec['results']
 		urls = [imgs[i].preview['src'] for i in range(len(imgs))]
 		dims = [[imgs[i].preview['width'], imgs[i].preview['height']] for i in range(len(imgs))]
@@ -146,14 +182,32 @@ def fetch_img(n_img):
 
 
 # ------------------ CALLBACKS -----------------------
+@app.callback(
+	Output("folders-dropdown", "options"),
+	[Input("title", "value")],
+)
+def update_dropdown(value): 
+	all_folders = fetch_folders('Sketchtember')
+	options = []
+	for i in range(0, len(all_folders)):
+		if all_folders[i]['name']=='Featured':
+			continue
+		options.append(
+			{"label": all_folders[i]['name'], "value": all_folders[i]['folderid']}
+		)
+	return options
+
+
+
 # when the button is clicked, it creates a master clock
 @app.callback(
 	[Output('da-api-results-box', 'children'),
 	Output('master_clock_box', 'children')],
 	[Input('button_start', 'n_clicks')],
-	[State('radio_timing', 'value')]
+	[State('radio_timing', 'value'),
+	State('folders-dropdown', 'value')]
 	)
-def create_master_clock(n_clicks, radio_value):
+def create_master_clock(n_clicks, radio_value, dropdown_value):
 	if n_clicks > 0:
 		master_clock = dcc.Interval(
 			id='master_clock',
@@ -162,7 +216,7 @@ def create_master_clock(n_clicks, radio_value):
 		)
 		# fetch deviations with Deviantart API
 		n_img = len(radio_value.split(','))
-		img_dict = fetch_img(n_img)
+		img_dict = fetch_img(n_img, dropdown_value, 'Sketchtember')
 	else:
 		print('sending dummy json result to da-api-results-box')
 		master_clock = ['']
