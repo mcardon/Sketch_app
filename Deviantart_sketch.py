@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # Created by Melissa Cardon
 
+import sys
 import json
 import datetime
 import deviantart
@@ -11,6 +12,16 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
 
+
+# ---------------- READ CONFIG -------------------
+if "--server" in sys.argv:
+    configfile = "./config_server.json"
+else:
+    configfile = "./config.json"
+
+
+config = json.load(open(configfile))
+
 # ------------------ COLORS -----------------------
 
 # color_2 = '#BBBBBB'
@@ -19,7 +30,7 @@ color_left = '#AAAADD'
 color_right = '#FFFFFF'
 color_img_div = '#FFFFFF'
 
-with open("./da_login2.json", "r") as read_file:
+with open(config["credential_path"], "r") as read_file:
 	da_logs = json.load(read_file)
 # ------------------ DEBUG PARAMS -----------------
 RUN_DA = True
