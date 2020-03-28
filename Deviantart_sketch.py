@@ -55,6 +55,10 @@ img_url_test = ['https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/i/2831f
 # Layout
 app.layout = html.Div(
 	[
+                html.Link(
+                            rel='stylesheet',
+                                    href='https://codepen.io/chriddyp/pen/bWLwgP.css'
+                        ),
 		html.Div(
 			[
 				html.Div(
@@ -264,4 +268,4 @@ def fire_img_timer(n_intervals, radio_value, json_dev):
 
 
 if (__name__ == '__main__') & run_app:
-	app.run_server(debug=True)
+	app.run_server(host="0.0.0.0", debug=True)
