@@ -13,11 +13,11 @@ import dash_html_components as html
 from dash.dependencies import Input, Output, State
 
 
-# ---------------- READ CONFIG -------------------
+# ---------------- READ CONFIG -------------------
 if "--server" in sys.argv:
     configfile = "./config_server.json"
 else:
-    configfile = "./config.json"
+    configfile = "/var/www/Sketch_app/config.json"
 
 
 config = json.load(open(configfile))
@@ -51,6 +51,7 @@ dropdownmenu = dcc.Dropdown(
 
 # App
 app = dash.Dash()
+server = app.server
 app.css.append_css({
 	'external_url': 'https://codepen.io/chriddyp/pen/bWLwgP.css'
 })
