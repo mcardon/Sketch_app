@@ -17,7 +17,8 @@ from dash.dependencies import Input, Output, State
 if "--server" in sys.argv:
     configfile = "./config_server.json"
 else:
-    configfile = "/var/www/Sketch_app/config.json"
+    #configfile = "/var/www/Sketch_app/config.json"
+    configfile = "./config.json"
 
 
 config = json.load(open(configfile))
@@ -206,7 +207,7 @@ def update_dropdown(value):
 	all_folders = fetch_folders('Sketchtember')
 	options = []
 	for i in range(0, len(all_folders)):
-		if all_folders[i]['name']=='Featured':
+		if (all_folders[i]['name']=='Featured') | (all_folders[i]['name'][0]!='2') :
 			continue
 		options.append(
 			{"label": all_folders[i]['name'], "value": all_folders[i]['folderid']}
@@ -252,7 +253,10 @@ def create_master_clock(n_clicks, radio_value, dropdown_value):
 	[State(component_id='radio_timing', component_property='value'),
 	State('da-api-results-box', 'children')])
 def fire_img_timer(n_intervals, radio_value, json_dev):
-	img_dict = json.loads(json_dev)
+	img_dict_one = json.loads(json_dev)
+
+	# double img list (in case some are missing)
+	img_dict = {k:img_dict_one[k]*2 for k in img_dict_one.keys()}
 	#print('This is img dict')
 	#print(img_dict)
 	# display imgs at the right time
