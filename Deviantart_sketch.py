@@ -76,7 +76,7 @@ app.layout = html.Div(
 		html.Div(
 			[
 				html.Div(
-					[html.H1('Sketchtember', id='title', n_clicks=0)], 
+					[html.H1('Sketchtember_debugphase', id='title', n_clicks=0)], 
 					style={'background': color_head},
 					className="twelve columns"),
 			], 
