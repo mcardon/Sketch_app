@@ -76,7 +76,7 @@ app.layout = html.Div(
 		html.Div(
 			[
 				html.Div(
-					[html.H1('Sketchtember_debugphase3', id='title', n_clicks=0)], 
+					[html.H1('Sketchtember_debugphase4', id='title', n_clicks=0)], 
 					style={'background': color_head},
 					className="twelve columns"),
 			], 
@@ -149,9 +149,9 @@ def fetch_folders(username='Sketchtember'):
 	return all_folders
 
 def choose_img_display(img_url, img_height, img_width, max_height):
+	ratio_img = float(max_height)/float(img_height)
 	# choose the display depending on img ratio
 	if img_height>= img_width:
-		ratio_img = float(max_height)/float(img_height)
 		# print('width:', str(int(img_width*ratio_img))+'px')
 		# print('width:', str(int(ratio_img*100))+'%')
 		img_display = html.Img(
