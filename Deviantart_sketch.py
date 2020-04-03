@@ -162,7 +162,7 @@ def choose_img_display(img_url, img_height, img_width, max_height):
 		img_display = html.Img(
 			src=img_url,
 			style={
-				'width': '100%'
+				'height': str(max_height)+'px'
 			})
 	return img_display
 
