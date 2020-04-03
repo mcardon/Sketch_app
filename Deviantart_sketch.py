@@ -2,6 +2,7 @@
 # Created by Melissa Cardon
 
 import sys
+import os
 import json
 import datetime
 import deviantart
@@ -14,12 +15,12 @@ from dash.dependencies import Input, Output, State
 
 
 # ---------------- READ CONFIG -------------------
-if "--server" in sys.argv:
-    configfile = "./config_server.json"
+if os.path.exists("/var/www/Sketch_app/"):
+    # if on tiphaine's server
+    configfile = "/var/www/Sketch_app/config_server.json"
 else:
-    #configfile = "/var/www/Sketch_app/config.json"
+    # else, i.e. local development
     configfile = "./config.json"
-
 
 config = json.load(open(configfile))
 
