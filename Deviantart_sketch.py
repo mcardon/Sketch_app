@@ -2,7 +2,6 @@
 # Created by Melissa Cardon
 
 import sys
-import os
 import json
 import datetime
 import deviantart
@@ -15,11 +14,10 @@ from dash.dependencies import Input, Output, State
 
 
 # ---------------- READ CONFIG -------------------
-if os.path.exists("/var/www/Sketch_app/"):
-    # if on tiphaine's server
-    configfile = "/var/www/Sketch_app/config_server.json"
+if "--server" in sys.argv:
+    configfile = "./config_server.json"
 else:
-    # else, i.e. local development
+    #configfile = "/var/www/Sketch_app/config.json"
     configfile = "./config.json"
 
 
@@ -153,16 +151,18 @@ def choose_img_display(img_url, img_height, img_width, max_height):
 	ratio_img = max_height/img_height
 	# choose the display depending on img ratio
 	if img_height>= img_width:
+		# print('width:', str(int(img_width*ratio_img))+'px')
+		# print('width:', str(int(ratio_img*100))+'%')
 		img_display = html.Img(
 			src=img_url,
 			style={
-				'width': str(int(img_width*ratio_img))+'px'
+				'width': str(int(ratio_img*100))+'%'
 			})
 	else:
 		img_display = html.Img(
 			src=img_url,
 			style={
-				'height': str(max_height)+'px'
+				'width': '100%'
 			})
 	return img_display
 
