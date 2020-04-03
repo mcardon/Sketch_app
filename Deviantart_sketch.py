@@ -76,7 +76,7 @@ app.layout = html.Div(
 		html.Div(
 			[
 				html.Div(
-					[html.H1('Sketchtember_debugphase', id='title', n_clicks=0)], 
+					[html.H1('Sketchtember_debugphase1', id='title', n_clicks=0)], 
 					style={'background': color_head},
 					className="twelve columns"),
 			], 
@@ -159,13 +159,14 @@ def choose_img_display(img_url, img_height, img_width, max_height):
 			style={
 				'width': str(int(ratio_img*100))+'%'
 			})
+		return img_display
 	else:
 		img_display = html.Img(
 			src=img_url,
 			style={
 				'width': '100%'
 			})
-	return img_display
+		return img_display
 
 def fetch_img(n_img, folderid, username):
 	# max number of img : 50
