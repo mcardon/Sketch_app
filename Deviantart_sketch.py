@@ -158,6 +158,7 @@ def choose_img_display(img_url, img_height, img_width, max_height):
 				'width': str(int(ratio_img*100))+'%'
 			})
 		return img_display
+
 	else:
 		img_display = html.Img(
 			src=img_url,
@@ -275,7 +276,7 @@ def fire_img_timer(n_intervals, radio_value, json_dev):
 	if i < len(session_time):
 		print(n_intervals, session_time[i],i)
 		img_url = img_dict['urls'][i]
-		max_height = 500
+		max_height = 400
 		img_width = img_dict['dims'][i][0]
 		img_height = img_dict['dims'][i][1]
 		img_display = choose_img_display(img_url, img_height, img_width, max_height)
