@@ -40,8 +40,6 @@ run_app = True
 # ------------------ DA API -----------------------
 
 
-
-
 # ------------------ DASH APP -----------------------
 dropdownmenu = dcc.Dropdown(
 	id='folders-dropdown',
@@ -95,11 +93,16 @@ app.layout = html.Div(
 			[
 				html.Div(
 					[
+						html.Div(['Drawing speed']),
 						dcc.RadioItems(
 							id='radio_timing',
 							options=[
-								{'label': 'Just looking (10 images in 30 sec)', 'value': '3,6,9,12,15,18,21,24,30,33'},
-								{'label': 'Warm up (12 min, 10 sketches, increasing time)', 'value': '30,60,90,120,150,180,240,300,420,720'}
+								{'label': 'Slow (40 min)', 'value': '600,1200,1800,2400'},
+								{'label': 'Medium (25 min)', 'value': '300,600,900,1200,1500,1800'},
+								{'label': 'Fast (20 min)', 'value': '120,240,360,480,600,720,840,960,1080,1200'},
+								{'label': 'Progressive (12 min)', 'value': '30,60,90,120,150,180,240,300,420,720'},
+								{'label': 'Hardcore (10 min)', 'value': '60,120,180,240,300,360,420,480,540,600'},
+								{'label': 'Preview images (30 sec)', 'value': '3,6,9,12,15,18,21,24,27,30'}
 								#{'label': 'Workout (30 min, 6 sketches of 5 min)', 'value': '300,600,900,1200,1500,1800'}
 							],
 							value='30,60,90,120,150,180,240,300,420,720',
@@ -209,12 +212,20 @@ def fetch_img(n_img, folderid, username):
 def update_dropdown(value): 
 	all_folders = fetch_folders('Sketchtember')
 	options = []
+	dropdown_default='0'
 	for i in range(0, len(all_folders)):
 		if (all_folders[i]['name']=='Featured') | (all_folders[i]['name'][0]!='2') :
 			continue
 		options.append(
 			{"label": all_folders[i]['name'], "value": all_folders[i]['folderid']}
 		)
+		if (dropdown_default == '0') & True:
+			dropdown_default = all_folders[i]['folderid']
+
+	#today = datetime.today()
+	#today_str = "%s-%s-%s" %(today.year.zfill(4), today.month.zfill(2), today.day.zfill(2) )
+	#print(today_str)
+
 	return options
 
 
