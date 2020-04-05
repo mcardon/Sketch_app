@@ -74,19 +74,22 @@ app.layout = html.Div(
 		html.Div(
 			[
 				html.Div(
-					[html.H1('Sketchtember', id='title', n_clicks=0)], 
-					style={'background': color_head},
-					className="twelve columns"),
+					[html.H1('Sketchtember', id='title', n_clicks=0)],
+					className="four columns"),
+				
 			], 
+		style={'background': color_head},
 		className="row"
 		),
 		html.Div(
 			[
-				html.Div(
-					[dropdownmenu], 
-					style={'background': color_head},
-					className="two columns"),
+			html.Div(
+				[dropdownmenu], 
+				# style={'background': color_head},
+				className="four columns"),
+				
 			], 
+		style={'background': color_head},
 		className="row"
 		),
 		html.Div(
@@ -102,7 +105,7 @@ app.layout = html.Div(
 								{'label': 'Fast (20 min)', 'value': '120,240,360,480,600,720,840,960,1080,1200'},
 								{'label': 'Progressive (12 min)', 'value': '30,60,90,120,150,180,240,300,420,720'},
 								{'label': 'Hardcore (10 min)', 'value': '60,120,180,240,300,360,420,480,540,600'},
-								{'label': 'Preview images (30 sec)', 'value': '3,6,9,12,15,18,21,24,27,30'}
+								{'label': 'Preview (30 sec)', 'value': '3,6,9,12,15,18,21,24,27,30'}
 								#{'label': 'Workout (30 min, 6 sketches of 5 min)', 'value': '300,600,900,1200,1500,1800'}
 							],
 							value='30,60,90,120,150,180,240,300,420,720',
@@ -206,27 +209,32 @@ def fetch_img(n_img, folderid, username):
 
 # ------------------ CALLBACKS -----------------------
 @app.callback(
-	Output("folders-dropdown", "options"),
+	[Output("folders-dropdown", "options"),
+	Output("folders-dropdown", "value")],
 	[Input("title", "value")],
 )
 def update_dropdown(value): 
 	all_folders = fetch_folders('Sketchtember')
 	options = []
 	dropdown_default='0'
+	today = datetime.date.today()
+	today_str = "%s-%s-%s" %(str(today.year).zfill(4), str(today.month).zfill(2), str(today.day).zfill(2) )
+	print(today_str)
+
 	for i in range(0, len(all_folders)):
 		if (all_folders[i]['name']=='Featured') | (all_folders[i]['name'][0]!='2') :
 			continue
 		options.append(
 			{"label": all_folders[i]['name'], "value": all_folders[i]['folderid']}
 		)
-		if (dropdown_default == '0') & True:
-			dropdown_default = all_folders[i]['folderid']
+		# print(all_folders[i]['name'][0:10])
+		# set the defaut value of dropdown to today's session (if it exists)
+		if (dropdown_default == '0'):
+			if (all_folders[i]['name'][0:10]==today_str):
+				dropdown_default = all_folders[i]['folderid']
 
-	#today = datetime.today()
-	#today_str = "%s-%s-%s" %(today.year.zfill(4), today.month.zfill(2), today.day.zfill(2) )
-	#print(today_str)
-
-	return options
+	
+	return options, dropdown_default
 
 
 
@@ -273,9 +281,6 @@ def fire_img_timer(n_intervals, radio_value, json_dev):
 	img_dict = {k:img_dict_one[k]*2 for k in img_dict_one.keys()}
 	#print('This is img dict')
 	#print(img_dict)
-	# display imgs at the right time
-	#session_time = [30,60,90,120,150,180,240,300,420,720]
-	#session_time = [5,10,15,20,25,30,35,40,45,50]
 	session_time = [int(t) for t in radio_value.split(',')]
 	i=0
 	while n_intervals > session_time[i]:
@@ -292,7 +297,7 @@ def fire_img_timer(n_intervals, radio_value, json_dev):
 		img_height = img_dict['dims'][i][1]
 		img_display = choose_img_display(img_url, img_height, img_width, max_height)
 	else:
-		img_display = html.Div(['Félicitations !!! (et merciiiiiii)'])
+		img_display = html.Div(['Congratulations, you did it !!! See you tomorrow ?'])
 	timer_display = str(session_time[min(len(session_time)-1,i)] - n_intervals)
 	return img_display, timer_display
 
